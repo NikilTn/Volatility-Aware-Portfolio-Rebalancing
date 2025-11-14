@@ -1,0 +1,59 @@
+# Main configuration file for volatility forecasting project
+
+# Data configuration
+data:
+  tickers:
+    - SPY
+    - QQQ
+    - IWM
+    - EFA
+    - EEM
+    - TLT
+    - GLD
+  start_date: "2010-01-01"
+  end_date: "2024-12-31"
+  
+# Split configuration
+splits:
+  train_end: "2017-12-31"
+  val_end: "2019-12-31"
+  test_end: "2024-12-31"
+  embargo_days: 5
+
+# Feature engineering
+features:
+  windows: [1, 5, 22, 66, 132, 252]
+  horizons: [1, 5, 22]
+
+# TFT model configuration
+tft:
+  model_type: "tft"  # or "lstm"
+  window_length: 60  # Reduced from 90 to handle NaNs better
+  batch_size: 64
+  hidden_size: 64  # Reduced for regularization
+  num_layers: 2
+  dropout: 0.2  # Increased for better regularization
+  learning_rate: 0.001
+  num_epochs: 50  # Reduced for faster training
+  patience: 15  # Increased patience
+  use_feature_subset: true  # Use curated feature subset to reduce noise
+  use_lr_scheduler: true  # Use ReduceLROnPlateau
+  loss_function: "mse"  # "mse" or "qlike"
+
+# Portfolio configuration
+portfolio:
+  target_vol: 0.10  # 10% annualized
+  transaction_cost: 0.0010  # 10 bps
+  rebalance_frequency: "daily"  # "daily" or "weekly"
+  rebalance_band: 0.05  # 5 percentage points
+  rebalance_factor: 0.7  # Partial rebalance
+  max_leverage: 2.0
+  max_position: 0.50
+  add_benchmarks: true  # Add equal-weight and realized-vol benchmarks
+
+# Models to evaluate
+models:
+  - har
+  - garch
+  - tft
+
